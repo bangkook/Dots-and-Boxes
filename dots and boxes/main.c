@@ -21,6 +21,9 @@ void setTextColor(char* color){
     SetConsoleTextAttribute(hstdout, color);
 }
 
+//array to store moves played in the game in the order row column player
+int movesplayed[][3];
+
 typedef struct{
     char* name;
     int score;
@@ -35,11 +38,14 @@ computer={"computer", 0, blue, 0};
 void UI(int size, char (*grid)[5], player player1, player player2){
     int remLines = 12;
     setCursorPosition(40, 1);
-    printf("0 1 2 3 4");
+    for(int i=0; i<size; i++) printf("%d ", i);
+    for(int i=0; i<size; i++){
+        setCursorPosition(38, 2+i);
+        printf("%d", i);
+    }
 
-    printf("\n\t\t\t\t\t0\n1\n2\n3\n4");
     for (int i=0; i<size; i++){
-            printf("\t\t\t\t\t ");
+        setCursorPosition(40, 2+i);
         for (int j=0; j<size; j++){
 
             grid[i][j] = (i%2==0 && j%2==0)? '*' : ' ' ;
@@ -73,10 +79,25 @@ void UI(int size, char (*grid)[5], player player1, player player2){
 
 
 void GameLoop(int size, char (*grid)[5]){
+    int nmoves = 0;
     int remLines = 12;
     int playerNo = 1;
     time_t starttime;
     starttime = time(NULL);
+    char newgrid[size][size];
+
+    for(int i=0; i<size; i++){
+        for(int j=0; j<size; j++){
+            if(i % 2 == 0 && j % 2 != 0 && grid[i][j] == ' ')
+                newgrid[i][j] = 'h';
+
+            else if(i % 2 != 0 && j % 2== 0 && grid[i][j] == ' ')
+                newgrid[i][j] = 'v';
+
+            else
+                newgrid[i][j] = grid[i][j];
+        }
+    }
 
     while(remLines != 0){
         char* color = playerNo==1? player1.color : player2.color;
@@ -102,31 +123,54 @@ void GameLoop(int size, char (*grid)[5]){
         }
 
         remLines--;
+        nmoves++;
         //updateGrid(playerNo, 5, &grid, row1, col1, row2, col2, seconds, remLines, player1.moves, player1.score, player2.moves, player2.score);
         //playerNo = switchPlayer(playerNo);
         system("cls");
         time_t seconds;
         seconds = time(NULL);
-        char l = playerNo==1?'A':'B';
-        if(row1==row2) {
-            grid[row1-48][col1+1-48] = l;
+        char l = playerNo == 1 ? 'A' : 'B';
+        if(row1 == row2) {
+            grid[row1 - 48][(col1 + col2) / 2 - 48] = l;
         }
-        else if (col1==col2){
-            grid[row1+1-48][col1-48] = l;
+        else if (col1 == col2){
+            grid[(row1 + row2) / 2 - 48][col1 - 48] = l;
         }
 
+        int horizontal = 0;
+        if(row1 == row2) horizontal = 1;
+        int vertical = 0;
+        if(col1 == col2) vertical = 1;
+
         setTextColor(reset);
+        setCursorPosition(40, 1);
+        for(int i=0; i<size; i++) printf("%d ", i);
+        for(int i=0; i<size; i++){
+            setCursorPosition(38, 2+i);
+            printf("%d", i);
+        }
+
         for (int i=0; i<size; i++){
             setCursorPosition(40, 2+i);
             for (int j=0; j<size; j++){
                 setTextColor(reset);
                 if(grid[i][j] == 'A') {
                     setTextColor(player1.color);
+                    if(newgrid[i][j] == 'h') {
+                        setCursorPosition(40+j, 2+i);
+                        printf("---");
+                    }
+                    if(newgrid[i][j] == 'v') {
+                        setCursorPosition(40+j, 2+i);
+                        printf('*');
+                    }
                 }
                 else if(grid[i][j] == 'B'){
                     setTextColor(player2.color);
+                    if(newgrid[i][j] == 'h') printf("---");
+                    if(newgrid[i][j] == 'v') printf('|');
                 }
-                printf("%c ", grid[i][j]);
+
 
             }
 
@@ -170,16 +214,21 @@ int switchPlayer(int playerNo){
     return (playerNo==1? 2 : 1);
 }
 
-int ValidMove(int r1, int c1, int r2, int c2, char (*grid)[5], int size){
+int ValidMove(int r1, int c1, int r2, int c2, char (*grid)[5], int size){//add if c2>c1 or r2>r1
     //not vaild if same point
-    if(r1==r2 && c1==c2){
+    if(r1==r2 && c1==c2 || r1 != r2 && c1!=c2)
         return 0;
-    }
-    if(r1==r2 && grid[r1][c1+1] != ' ')
+    if (c1 % 2 != 0 || c2 % 2 != 0 || r1 % 2 != 0 || r2 % 2 != 0)
         return 0;
-    if(c1==c2 && grid[r1+1][c1] != ' ')
+    if(r1==r2 && grid[r1][(c1+c2)/2] != ' ')
         return 0;
-     if(r1<0 || r1>size || c1<0 || c1>size || r2<0 || r2>size || c2<0 || c2>size)
+    if(c1==c2 && grid[(r1+r2)/2][c1] != ' ')
+        return 0;
+    if(r1<0 || r1>size-1 || c1<0 || c1>size-1 || r2<0 || r2>size-1 || c2<0 || c2>size-1)
+        return 0;
+    if(r1 == r2 && abs(c1-c2) != 2)
+        return 0;
+    if(c1 == c2 && abs(r1-r2) != 2)
         return 0;
 
     return 1;

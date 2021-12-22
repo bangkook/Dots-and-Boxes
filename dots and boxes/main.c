@@ -129,7 +129,7 @@ void UI(int n, char (*grid)[size], player player1, player player2){
         setCursorPosition(40, 2+i);
         for (int j=0; j<size; j++){
 
-            grid[i][j] = (i%2==0 && j%2==0)? '*' : ' ' ;
+            grid[i][j] = (i%2==0 && j%2==0)? 254 : ' ' ;
 
             printf("%c ", grid[i][j]);
         }
@@ -185,7 +185,7 @@ void GameLoop(int n, char (*grid)[size]){
         for (int z=0; z<size; z++){
           for (int j=0; j<size; j++){
 
-            grid2[z][j] = (z%2==0 && j%2==0)? '*' : ' ' ;
+            grid2[z][j] = (z%2==0 && j%2==0)? 254 : ' ' ;
 
         }
 
@@ -197,7 +197,7 @@ void GameLoop(int n, char (*grid)[size]){
         char* color = playerNo==1? player1.color : player2.color;
         setTextColor(color);
         if(playerNo == 2 && mode == 0){
-            computerTurn(5, grid, &row1, &row2, &col1, &col2);
+            computerTurn(size, grid, &row1, &row2, &col1, &col2);
         }
 
         else {
@@ -256,22 +256,22 @@ void GameLoop(int n, char (*grid)[size]){
                     if(newgrid[i][j] == 'h') {
 
 
-                        grid2[i][j]='--';
+                        grid2[i][j]= 205;
                     }
                     if(newgrid[i][j] == 'v') {
 
 
-                        grid2[i][j]='|';
+                        grid2[i][j]= 186;
                     }
                 }
                 else if(grid[i][j] == 'B'){
                     setTextColor(player2.color);
                     if(newgrid[i][j] == 'h') {
 
-                        grid2[i][j]='--';
+                        grid2[i][j]= 205;
                     }
                     if(newgrid[i][j] == 'v') {
-                            grid2[i][j]='|';
+                            grid2[i][j]= 186;
                     }
                 }
                 printf("%c ", grid2[i][j]);

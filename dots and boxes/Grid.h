@@ -1,69 +1,48 @@
-#define red FOREGROUND_RED
-#define blue FOREGROUND_BLUE
-#define green FOREGROUND_GREEN
-#define reset FOREGROUND_BLUE|FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY
+//main grid
 
+void UI(time_t timebefore, char (*grid)[size], char (*grid2)[size], player player1, player player2, int remLines){
+    //printing the index number
+    setCursorPosition(40, 1);
+    setTextColor(reset);
+    for(int i=0; i<size; i++) printf("%d ", i);
+    for(int i=0; i<size; i++){
+        setCursorPosition(38, 2+i);
+        printf("%d", i);
+    }
 
-struct player{
-    char* name;
-    int score;
-    char* color;
-    int moves;
-}
-player1={.score=0, .color=red, .moves=0},
-player2={.score=0, .color=blue, .moves=0},
-computer={"computer", 0, blue, 0};
-
-void setCursorPosition(int x, int y){
-    COORD pos = {x, y};
-    HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleCursorPosition(hstdout, pos);
-}
-
-void setTextColor(char* color){
-    HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hstdout, color);
-}
-
-
-void UI(int nrow, int ncol){
-    int nlines = 12;
-    time_t seconds;
-    seconds = time(NULL);
-    int len = 2 * nrow + 1;
-    char grid[len][len];
-    for (int i=0; i<len; i++){
+    for (int i=0; i<size; i++){
         setCursorPosition(40, 2+i);
-        for (int j=0; j<len; j++){
+        for (int j=0; j<size; j++){
+            setTextColor(reset);
 
-            grid[i][j] = (i%2==0 && j%2==0)? 245 : ' ' ;
+            if (grid[i][j] == 'A') setTextColor(player1.color);
+            if (grid[i][j] == 'B') setTextColor(player2.color);
 
-            printf("%c ", grid[i][j]);
+
+            printf("%c ", grid2[i][j]);
         }
 
         printf("\n");
     }
-    setCursorPosition(0, len+3);
-    setTextColor(red);
-    printf("player 1's name: \n\n");
-    printf("number of moves for player 1: %d\n\n", player1.moves);
-    printf("player 1's score: %d\n\n", player1.score);
-    setTextColor(green);
-    printf("no. of remaining lines: %d\n\n", nlines);
-    //struct player player_2 = mode=="2 players""? player2 : computer;
-    setCursorPosition(55+len, len+3);
-    setTextColor(blue);
-    printf("player 2's name: \n\n");
-    setCursorPosition(55+len, len+5);
-    printf("number of moves for player 2: %d\n\n", player2.moves);
-    setCursorPosition(55+len, len+7);
-    printf("player 2's score: %d\n\n", player2.score);
-    setCursorPosition(55+len, len+9);
-    setTextColor(green);
-    int min = 0;
-    int sec = 0;
-    printf("time: %02d:%02d\n\n", min, sec);
-    setTextColor(reset);
 
+    setTextColor(red);
+    printf("\n  player 1's name: %s\n\n",player1.name);
+    printf("  number of moves for player 1: %d\n\n", player1.moves);
+    printf("  player 1's score: %d\n\n", player1.score);
+    setTextColor(green);
+    printf("  no. of remaining lines: %d\n\n", remLines);
+    //struct player player_2 = mode=="2 players""? player2 : computer;
+
+    setTextColor(blue);
+    setCursorPosition(0, size+3);
+    printf("\t\t\t\t\t\tplayer 2's name: %s \n\n", player2.name);
+    printf("\t\t\t\t\t\tnumber of moves for player 2: %d\n\n", player2.moves);
+    printf("\t\t\t\t\t\tplayer 2's score: %d\n\n", player2.score);
+    setTextColor(green);
+    time_t timeafter = time(NULL);
+    int min = (timeafter - timebefore) / 60;
+    int sec = (timeafter - timebefore) % 60;
+    printf("\t\t\t\t\t\ttime: %02d:%02d\n\n", min, sec);
+    setTextColor(reset);
 
 }

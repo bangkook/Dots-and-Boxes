@@ -27,7 +27,7 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
 
     int remLines = 2 * n * (n + 1);
 
-    int playerNo = 1, undo = 0;
+    int playerNo = 1;
 
     time_t starttime;
     starttime = time(NULL);
@@ -62,6 +62,10 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
      UI(starttime, grid, grid2, player1, player2, remLines);
 
     int boxes[n*n][5];
+    //initializing last column to zero to indicate box is not checked
+    for(int i = 0; i < n*n; i++)
+        boxes[i][4] = 0;
+    
     while(remLines != 0){
             //if mode 1
         char row1, row2, col1, col2;
@@ -97,49 +101,28 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
 
         }
 
-        //undo store last move then delete it , redo restore it
-        if(undo){
-                system("cls");
-                player1.moves--;
-                player2.moves--;
 
-                grid2[player1.lastmove[0]][player1.lastmove[1]] = ' ';
-                grid2[player2.lastmove[0]][player2.lastmove[1]] = ' ';
-                grid[player1.lastmove[0]][player1.lastmove[1]] = ' ';
-                grid[player2.lastmove[0]][player2.lastmove[1]] = ' ';
+        remLines--;
 
-                remLines += 2;
-                playerNo = switchPlayer(playerNo);
-            }
+        //updateGrid(playerNo, 5, &grid, row1, col1, row2, col2, seconds, remLines, player1.moves, player1.score, player2.moves, player2.score);
+        //playerNo = switchPlayer(playerNo);
 
+        system("cls");
 
+        char l = playerNo == 1 ? 'A' : 'B';
+        grid[(row1 + row2) / 2][(col1 + col2) / 2] = l;
 
-        //else{
-            remLines--;
-
-            //updateGrid(playerNo, 5, &grid, row1, col1, row2, col2, seconds, remLines, player1.moves, player1.score, player2.moves, player2.score);
-            //playerNo = switchPlayer(playerNo);
-
-            system("cls");
-
-            char l = playerNo == 1 ? 'A' : 'B';
-            grid[(row1 + row2) / 2][(col1 + col2) / 2] = l;
-
-            int scorebefore;
-            // number of moves
-            if (playerNo==1){
-                player1.moves++;
-                scorebefore = player1.score;
-                player1.lastmove[0] = (row1 + row2) / 2;
-                player1.lastmove[1] = (col1 + col2) / 2;
-            }
-            else{
-                player2.moves++;
-                scorebefore = player2.score;
-                player2.lastmove[0] = (row1 + row2) / 2;
-                player2.lastmove[1] = (col1 + col2) / 2;
-            }
-        //}
+        int scorebefore;
+        // number of moves
+        if (playerNo==1){
+            player1.moves++;
+            scorebefore = player1.score;
+        }
+        else{
+            player2.moves++;
+            scorebefore = player2.score;
+        }
+    
 
         for (int i=0; i<size; i++){
 
@@ -190,7 +173,7 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
                 grid2[c+1][d+1] = l;
                 grid[c+1][d+1] = l;
             }
-            if(d < n) {
+            if(d < size - 4) {
                 d += 2;
             }
             else{
@@ -210,7 +193,14 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
         else if(playerNo == 2 && player2.score == scorebefore)
             playerNo = switchPlayer(playerNo);
 
-        undo = 0;
+       setTextColor(reset);
+       printf("\t\t\t\t\tGAME ENDED\n");
+       if(player1.score > player2.score)
+           printf("\t\t\t\t\tplayer 1 wins\n");
+       else if(player2.score > player1.score)
+           printf("\t\t\t\t\tplayer 2 wins\n");
+       else
+           printf("\t\t\t\t\tTIE\n");
 
     }
 

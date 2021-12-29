@@ -1,7 +1,27 @@
 # depslib dependency file v1.0
-1639777719 source:d:\programming project\dots and boxes\main.c
+1640808851 source:d:\programming project\dots and boxes\main.c
 	<stdio.h>
-	"GridDisolay.h"
+	<stdlib.h>
+	<windows.h>
+	<string.h>
+	<time.h>
+	"MainMenu.h"
 
 1639777764 d:\programming project\dots and boxes\griddisolay.h
+
+1639777781 d:\programming project\dots and boxes\griddisplay.h
+
+1640809364 d:\programming project\dots and boxes\grid.h
+
+1640809548 d:\programming project\dots and boxes\mainmenu.h
+	"GameLoop.h"
+
+1640814324 d:\programming project\dots and boxes\gameloop.h
+	"computer.h"
+	"Grid.h"
+
+1639995114 d:\programming project\dots and boxes\updategrid.h
+	<time.h>
+
+1640798150 d:\programming project\dots and boxes\computer.h
 

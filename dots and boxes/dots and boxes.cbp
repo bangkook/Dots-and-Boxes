@@ -31,11 +31,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="GridDisolay.h" />
+		<Unit filename="GameLoop.h" />
+		<Unit filename="Grid.h" />
+		<Unit filename="MainMenu.h" />
+		<Unit filename="computer.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="player.h" />
+		<Unit filename="undo.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -1,13 +1,18 @@
 //main grid
 
 void UI(time_t timebefore, char (*grid)[size], char (*grid2)[size], player player1, player player2, int remLines){
+    system("cls");
     //printing the index number
     setCursorPosition(40, 1);
     setTextColor(reset);
-    for(int i=0; i<size; i++) printf("%d ", i);
+    for(int i=0; i<size; i++){
+        if(i == 10) printf("A");//hexadecimal digit instead of int 10
+        else printf("%d ", i);
+    }
     for(int i=0; i<size; i++){
         setCursorPosition(38, 2+i);
-        printf("%d", i);
+        if(i == 10) printf("A");//hexadecimal
+        else printf("%d", i);
     }
 
     for (int i=0; i<size; i++){
@@ -15,11 +20,16 @@ void UI(time_t timebefore, char (*grid)[size], char (*grid2)[size], player playe
         for (int j=0; j<size; j++){
             setTextColor(reset);
 
-            if (grid[i][j] == 'A') setTextColor(player1.color);
-            if (grid[i][j] == 'B') setTextColor(player2.color);
-
-
-            printf("%c ", grid2[i][j]);
+            if(grid[i][j] == 'A'){
+               setTextColor(player1.color);
+               printf("%c ", grid2[i][j]);
+            }
+            else if(grid[i][j] == 'B'){
+                setTextColor(player2.color);
+                printf("%c ", grid2[i][j]);
+            }
+            else
+                printf("%c ", grid[i][j]);
         }
 
         printf("\n");

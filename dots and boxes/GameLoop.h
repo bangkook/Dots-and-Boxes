@@ -1,62 +1,45 @@
 #include "computer.h"
 #include "Grid.h"
-#include <stdlib.h>
 
-int ValidMove(int r1, int c1, int r2, int c2, char (*grid)[size], int size){
-    //not valid if same point or random point
-    if(r1==r2 && c1==c2 || r1 != r2 && c1!=c2)
-        return 0;
-    if (c1 % 2 != 0 || c2 % 2 != 0 || r1 % 2 != 0 || r2 % 2 != 0)
-        return 0;
-    if(r1==r2 && grid[r1][(c1+c2)/2] != ' ')
-        return 0;
-    if(c1==c2 && grid[(r1+r2)/2][c1] != ' ')
-        return 0;
-    if(r1<0 || r1>size-1 || c1<0 || c1>size-1 || r2<0 || r2>size-1 || c2<0 || c2>size-1)
-        return 0;
-    if(r1 == r2 && abs(c1-c2) != 2)
-        return 0;
-    if(c1 == c2 && abs(r1-r2) != 2)
-        return 0;
+//function to check if move played is valid
+int ValidMove(int r, int c, char (*grid)[size], int size){
+    //valid only if it is a position of line and free
+    if(r % 2 == 0 && c % 2 == 1 || r % 2 == 1 && c % 2 == 0)
+        if(grid[r][c] == ' ')
+            return 1;
 
-    return 1;
+    return 0;
 
 }
-
-void GameLoop(int n, int size, int mode, char (*grid)[size]){
-
+//main loop of the game
+int GameLoop(int n, int size, int mode, char (*grid)[size]){
+    //total lines that can be drawn
     int remLines = 2 * n * (n + 1);
-
-    int playerNo = 1;
-
+    //player1 starts the game
+    int playerNo = 1, undo = 0;
+    //time of starting game
     time_t starttime;
     starttime = time(NULL);
-
+    //helping grid to store lines and be printed to screen
     char grid2[size][size];
+    char h = 205;//horizontal line
+    char v = 186;//vertical line
     for (int i=0; i<size; i++){
 
        for (int j=0; j<size; j++){
-
+        //initializing the grid with dots and spaces
         grid[i][j] = (i%2==0 && j%2==0)? 254 : ' ' ;
-        grid2[i][j] = grid[i][j];
+        if(i % 2 == 0 && j % 2 != 0 && grid[i][j] == ' ')
+                grid2[i][j] = h;//horizontal
+
+        else if(i % 2 != 0 && j % 2== 0 && grid[i][j] == ' ')
+            grid2[i][j] = v;//vertical
+
+        else
+            grid2[i][j] = grid[i][j];
 
         }
 
-    }
-    //grid to store information of positions of lines either vertical or horizontal
-    char newgrid[size][size];
-
-    for(int i=0; i<size; i++){
-        for(int j=0; j<size; j++){
-            if(i % 2 == 0 && j % 2 != 0 && grid[i][j] == ' ')
-                newgrid[i][j] = 'h';//horizontal
-
-            else if(i % 2 != 0 && j % 2== 0 && grid[i][j] == ' ')
-                newgrid[i][j] = 'v';//vertical
-
-            else
-                newgrid[i][j] = grid[i][j];
-        }
     }
 
      UI(starttime, grid, grid2, player1, player2, remLines);
@@ -65,35 +48,28 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
     //initializing last column to zero to indicate box is not checked
     for(int i = 0; i < n*n; i++)
         boxes[i][4] = 0;
-    
+
     while(remLines != 0){
             //if mode 1
-        char row1, row2, col1, col2;
+        char row, col;
         char* color = playerNo==1? player1.color : player2.color;
         setTextColor(color);
         if(playerNo == 2 && mode == 0){
-            computerTurn(size, grid, &row1, &row2, &col1, &col2);
+            computerTurn(size, grid, &row, &col);
         }
 
         else {
             printf(" player %d's turn\n", playerNo);
-            printf(" Enter row of first point: ");
-            scanf(" %c", &row1);
-            printf(" Enter column of first point: ");
-            scanf(" %c", &col1);
-            printf(" Enter row of second point: ");
-            scanf(" %c", &row2);
-            printf(" Enter column of second point: ");
-            scanf(" %c", &col2);
+            printf(" Enter row: ");
+            row = get_int();
+            printf(" Enter column: ");
+            col = get_int();
 
             //returning char value to its correct integer value
-            row1 -= 48; row2 -= 48; col1 -= 48; col2 -= 48;
+            //row -= 48; col -= 48;
 
-
-
-            if(!ValidMove(row1, col1, row2, col2, grid, size)){
+            if(!ValidMove(row, col, grid, size)){
                 setTextColor(reset);
-                system("cls");
                 UI(starttime, grid, grid2, player1, player2, remLines);
                 printf("\t\t\t\tMOVE IS NOT AVAILABLE!\n");
                 continue;
@@ -102,15 +78,11 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
         }
 
 
+
         remLines--;
 
-        //updateGrid(playerNo, 5, &grid, row1, col1, row2, col2, seconds, remLines, player1.moves, player1.score, player2.moves, player2.score);
-        //playerNo = switchPlayer(playerNo);
-
-        system("cls");
-
         char l = playerNo == 1 ? 'A' : 'B';
-        grid[(row1 + row2) / 2][(col1 + col2) / 2] = l;
+        grid[row][col] = l;
 
         int scorebefore;
         // number of moves
@@ -122,38 +94,6 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
             player2.moves++;
             scorebefore = player2.score;
         }
-    
-
-        for (int i=0; i<size; i++){
-
-            for (int j=0; j<size; j++){
-
-                if(grid[i][j] == 'A') {
-
-                    if(newgrid[i][j] == 'h') {
-
-                        grid2[i][j]= 205;
-                    }
-                    if(newgrid[i][j] == 'v') {
-
-                        grid2[i][j]= 186;
-                    }
-                }
-                else if(grid[i][j] == 'B'){
-
-                    if(newgrid[i][j] == 'h') {
-
-                        grid2[i][j]= 205;
-                    }
-                    if(newgrid[i][j] == 'v') {
-                            grid2[i][j]= 186;
-                    }
-                }
-
-            }
-
-        }
-
 
         //check if move completes a box
         int c = 0, d = 0, v = 0, s = 0;
@@ -170,9 +110,10 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
                 if(l == 'A') player1.score++;
                 else player2.score++;
                 boxes[v][4] = 1;
-                grid2[c+1][d+1] = l;
                 grid[c+1][d+1] = l;
+                grid2[c+1][d+1] = l;
             }
+
             if(d < size - 4) {
                 d += 2;
             }
@@ -180,6 +121,7 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
                c += 2;
                d = 0;
             }
+
             s = 0;
             v++;
         }
@@ -193,16 +135,19 @@ void GameLoop(int n, int size, int mode, char (*grid)[size]){
         else if(playerNo == 2 && player2.score == scorebefore)
             playerNo = switchPlayer(playerNo);
 
-       setTextColor(reset);
-       printf("\t\t\t\t\tGAME ENDED\n");
-       if(player1.score > player2.score)
-           printf("\t\t\t\t\tplayer 1 wins\n");
-       else if(player2.score > player1.score)
-           printf("\t\t\t\t\tplayer 2 wins\n");
-       else
-           printf("\t\t\t\t\tTIE\n");
+    }
 
+    setTextColor(reset);
+    printf("\t\t\t\t\tGAME ENDED\n");
+    if(player1.score > player2.score)
+        printf("\t\t\t\t\tplayer 1 wins\n");
+    else if(player2.score > player1.score)
+        printf("\t\t\t\t\tplayer 2 wins\n");
+    else{
+        printf("\t\t\t\t\tTIE\n");
+        return 0;
     }
 
 
+    return playerNo;
 }

@@ -1,27 +1,56 @@
 # depslib dependency file v1.0
-1640808851 source:d:\programming project\dots and boxes\main.c
+1641760739 source:d:\programming project\dots and boxes\main.c
 	<stdio.h>
 	<stdlib.h>
 	<windows.h>
 	<string.h>
 	<time.h>
+	<ctype.h>
 	"MainMenu.h"
 
 1639777764 d:\programming project\dots and boxes\griddisolay.h
 
 1639777781 d:\programming project\dots and boxes\griddisplay.h
 
-1640809364 d:\programming project\dots and boxes\grid.h
+1641755435 d:\programming project\dots and boxes\grid.h
 
-1640809548 d:\programming project\dots and boxes\mainmenu.h
+1641573584 d:\programming project\dots and boxes\mainmenu.h
 	"GameLoop.h"
 
-1640814324 d:\programming project\dots and boxes\gameloop.h
+1641761491 d:\programming project\dots and boxes\gameloop.h
+	"checkBox.h"
 	"computer.h"
 	"Grid.h"
 
 1639995114 d:\programming project\dots and boxes\updategrid.h
 	<time.h>
 
-1640798150 d:\programming project\dots and boxes\computer.h
+1641501342 d:\programming project\dots and boxes\computer.h
+
+1641501353 d:\programming project\dots and boxes\checkbox.h
+
+1641502994 d:\programming project\dots and boxes\undo.h
+
+1641762582 source:c:\users\user\downloads\dots and boxes\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	<string.h>
+	<time.h>
+	<ctype.h>
+	"MainMenu.h"
+
+1641573586 c:\users\user\downloads\dots and boxes\mainmenu.h
+	"GameLoop.h"
+
+1641761492 c:\users\user\downloads\dots and boxes\gameloop.h
+	"checkBox.h"
+	"computer.h"
+	"Grid.h"
+
+1641501354 c:\users\user\downloads\dots and boxes\checkbox.h
+
+1641501344 c:\users\user\downloads\dots and boxes\computer.h
+
+1641755436 c:\users\user\downloads\dots and boxes\grid.h
 
